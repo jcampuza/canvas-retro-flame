@@ -3,22 +3,28 @@ import { AnimationLoop } from './src/AnimationLoop';
 
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
+
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
-const width = 15;
-const height = 15;
-
+const width = 10;
+const height = 10;
 const rowLength = Math.ceil(canvasWidth / width);
 const columnLength = Math.ceil(canvasHeight / height);
 
 const pixels = new Matrix(rowLength, columnLength);
 
 function draw() {
+    // Note that we draw from the bottom to flip the matrix
     pixels.iterate((value, i, j) => {
         value = value.toString(16).padStart(2, '0');
         const color = `#${value}0000`;
         context.fillStyle = color;
-        context.fillRect(canvasWidth - i * width, canvasHeight - j * height, width, height);
+        context.fillRect(
+            canvasWidth - i * width,
+            canvasHeight - j * height,
+            width,
+            height
+        );
     });
 }
 
@@ -32,7 +38,7 @@ function update() {
         const pixelTopLeft = pixels.getValue(i - 1, j - 1) || 0;
         const pixelTop = pixels.getValue(i, j - 1) || 0;
         const pixelTopRight = pixels.getValue(i + 1, j - 1) || 0;
-        const newValue = Math.floor((pixelTop + pixelTopLeft + pixelTopRight) / 3.04);
+        const newValue = Math.floor((pixelTop + pixelTopLeft + pixelTopRight) / 3.03);
         return pixels.setValue(i, j, newValue);
     });
 }
@@ -44,11 +50,11 @@ if (process.env.NODE_ENV === 'development') {
     window.loop = loop;
 }
 
-// Stop the loop when tab is not visible to prevent
-// getting stuck updating on slow devices
+// Stop animation when visibility change so we don't end up updating
+// a ton when the tab is refocused
 document.addEventListener('visibilitychange', (e) => {
-    if (document.hidden) { loop.stop() }
-    else { loop.start() }
-})
+    if (document.hidden) {loop.stop();}
+    else {loop.start();}
+});
 
 loop.start();

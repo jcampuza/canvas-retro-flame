@@ -1,11 +1,11 @@
 // A simple 2D matrix class supporting get, set, and iterate methods
 
 export class Matrix {
-    constructor(rowLength, columnLength) {
+    constructor(rowLength, columnLength, matrix) {
         this.iLength = rowLength;
         this.jLength = columnLength;
 
-        this.matrix = Array.from({ length: rowLength }, (v, i) => {
+        this.matrix = matrix || Array.from({ length: rowLength }, (v, i) => {
             return Array.from({ length: columnLength }, (v, i) => 0);
         });
     }
@@ -49,5 +49,29 @@ export class Matrix {
                 callback(this.matrix[i][j], i, j);
             }
         }
+    }
+
+    /**
+     * To avoid having to create the reverse of a matrix
+     * @param {*} callback - Callback for every reversed coordinate
+     */
+    reverseIterate(callback) {
+        for (let i = 0; i < this.iLength; i++) {
+            for (let j = 0; j < this.jLength; j++) {
+                callback(this.matrix[i][j], i, j);
+            }
+        }
+    }
+
+    reverse() {
+        const reverseMatrix = new Matrix(this.iLength, this.columnLength);
+
+        this.iterate((value, i, j) => {
+            let reverseI = i + (this.iLength - (i * this.iLength) - 1);
+            let reverseJ = j + (this.jLength - (j * this.jLength) - 1);
+            reverseMatrix.setValue(reverseI, reverseJ, value);
+        });
+
+        return reverseMatrix;
     }
 }
