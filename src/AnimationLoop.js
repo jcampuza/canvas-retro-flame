@@ -38,7 +38,6 @@ export class AnimationLoop {
     }
 
     start() {
-        console.log('starting')
         this.lastTime = null;
         this.frameId = requestAnimationFrame(this.frame);
     }

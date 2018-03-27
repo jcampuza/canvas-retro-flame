@@ -18,7 +18,7 @@ function draw() {
         value = value.toString(16).padStart(2, '0');
         const color = `#${value}0000`;
         context.fillStyle = color;
-        context.fillRect(i * width, j * height, width, height);
+        context.fillRect(canvasWidth - i * width, canvasHeight - j * height, width, height);
     });
 }
 
@@ -43,5 +43,12 @@ const loop = new AnimationLoop(draw, update, 1000/24);
 if (process.env.NODE_ENV === 'development') {
     window.loop = loop;
 }
+
+// Stop the loop when tab is not visible to prevent
+// getting stuck updating on slow devices
+document.addEventListener('visibilitychange', (e) => {
+    if (document.hidden) { loop.stop() }
+    else { loop.start() }
+})
 
 loop.start();
